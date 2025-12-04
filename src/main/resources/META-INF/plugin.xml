@@ -1,0 +1,46 @@
+<idea-plugin>
+    <id>org.wy.moneyflow.money-tip-plugin</id>
+    <name>MoneyFlow</name>
+    <version>1.0.0</version>
+    <vendor email="your@email.com" url="https://your.url">Your Name</vendor>
+
+    <description><![CDATA[
+        💰 金钱提示插件：打字赚钱、删代码扣钱、股票监控、时间倒计时、定时提醒<br>
+        <b>功能说明：</b><br>
+        1. 状态栏显示下班/退休倒计时、今日赚钱、股票行情<br>
+        2. 打字赚钱、删除代码行扣钱，附带金钱四溅动画<br>
+        3. 支持自定义配置（时薪、股票代码、下班时间等）
+    ]]></description>
+
+    <change-notes><![CDATA[
+        1.0.0 初始版本
+    ]]></change-notes>
+
+    <idea-version since-build="231" until-build="241.*"/>
+
+    <!-- 注册配置界面 -->
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                instance="org.wy.moneyflow.config.MoneyTipConfigurable"
+                id="money.tip.configurable"
+                displayName="MoneyTip"
+                groupId="tools"/>
+
+        <statusBarWidgetFactory implementation="org.wy.moneyflow.statusbar.MoneyTipStatusBarWidget$Factory" id="moneyTipStatusBarWidget"/>
+
+        <notificationGroup id="MoneyTip Reminder"
+                           displayType="BALLOON"
+                           key="notification.group.moneytip"/>
+
+        <notificationGroup id="MoneyTip Stock Reminder"
+                           displayType="BALLOON"
+                           key="notification.group.moneytip.stock"/>
+    </extensions>
+
+    <!-- 插件启动/关闭监听 -->
+    <applicationListeners>
+        <listener class="org.wy.moneyflow.MoneyTipPlugin" topic="com.intellij.openapi.application.ApplicationListener"/>
+    </applicationListeners>
+
+    <depends>com.intellij.modules.platform</depends>
+</idea-plugin>
