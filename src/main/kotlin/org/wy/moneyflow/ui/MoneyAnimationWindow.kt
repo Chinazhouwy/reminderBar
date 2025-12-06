@@ -47,32 +47,37 @@ class MoneyAnimationWindow(
      * 初始化动画相关设置
      */
     private fun initializeAnimation() {
-        if (animationElements.size < MAX_ELEMENTS) {
-            isAlwaysOnTop = true
-            background = Color(0, 0, 0, 0) // 透明背景
+        isAlwaysOnTop = true
+        background = Color(0, 0, 0, 0) // 透明背景
 
-            // 优化：使用较小的窗口尺寸，只覆盖动画区域
-            size = Dimension(WINDOW_SIZE, WINDOW_SIZE)
-            // 定位窗口到点击位置附近，使动画居中显示
-            location = Point(x - WINDOW_SIZE / 2, y - WINDOW_SIZE / 2)
+        // 优化：使用较小的窗口尺寸，只覆盖动画区域
+        size = Dimension(WINDOW_SIZE, WINDOW_SIZE)
+        // 定位窗口到点击位置附近，使动画居中显示
+        location = Point(x - WINDOW_SIZE / 2, y - WINDOW_SIZE / 2)
 
-            // 创建共享图像资源
-            sharedImage = createMoneyImage()
+        // 创建共享图像资源
+        sharedImage = createMoneyImage()
 
-            // 创建动画元素
-            repeat(1) {
-                animationElements.add(
-                    MoneyElement(
-                        x = WINDOW_SIZE / 2 + (Math.random() * 100 - 50).toInt(),
-                        y = WINDOW_SIZE / 2 - (Math.random() * 50).toFloat(),
-                        dx = (Math.random() * 8 - 4).toInt(),
-                        dy = (Math.random() * 12 - 4).toDouble(),
-                        color = if (amount > 0) GREEN_COLOR else RED_COLOR,
-                        size = 12 + (Math.random() * 8).toInt(),
-                        image = sharedImage
-                    )
-                )
+        // 创建动画元素
+        repeat(1) {
+            // 检查是否超过最大数量限制
+            if (animationElements.size >= MAX_ELEMENTS) {
+                // 移除最早添加的元素（列表第一个元素）
+                animationElements.removeAt(0)
             }
+
+            // 添加新元素
+            animationElements.add(
+                MoneyElement(
+                    x = WINDOW_SIZE / 2 + (Math.random() * 100 - 50).toInt(),
+                    y = WINDOW_SIZE / 2 - (Math.random() * 50).toFloat(),
+                    dx = (Math.random() * 8 - 4).toInt(),
+                    dy = (Math.random() * 12 - 4).toDouble(),
+                    color = if (amount > 0) GREEN_COLOR else RED_COLOR,
+                    size = 12 + (Math.random() * 8).toInt(),
+                    image = sharedImage
+                )
+            )
         }
 
         isVisible = true
