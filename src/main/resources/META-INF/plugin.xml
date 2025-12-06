@@ -39,7 +39,7 @@
 
     <!-- 插件启动/关闭监听 -->
     <applicationListeners>
-        <listener class="org.wy.moneyflow.MoneyTipPlugin" topic="com.intellij.openapi.application.ApplicationListener"/>
+        <listener class="org.wy.moneyflow.MoneyTipPlugin" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
 
     <depends>com.intellij.modules.platform</depends>

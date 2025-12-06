@@ -2,6 +2,7 @@ package org.wy.moneyflow.config
 
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
 import org.wy.moneyflow.model.PluginConfig
@@ -25,6 +26,10 @@ class MoneyTipConfigurable : Configurable {
     private val remindIntervalField = JBTextField(config.remindInterval.toString())
     private val stockRemindThresholdField = JBTextField(config.stockRemindThreshold.toString())
 
+    private val stockFundUrlField = JBTextField(config.stockFundUrl)
+    private val enableCustomReminderCheckBox = JBCheckBox("启用自定义提醒", config.enableCustomReminder)
+
+
     // 配置界面UI
     override fun createComponent(): JComponent {
         return panel {
@@ -46,9 +51,16 @@ class MoneyTipConfigurable : Configurable {
             row("股票涨幅提醒阈值（%）：") {
                 stockRemindThresholdField()
             }
+            row("股票基金数据URL:") {
+                stockFundUrlField()
+            }
+            row("自定义提醒设置:") {
+                enableCustomReminderCheckBox()
+            }
             noteRow("提示：配置修改后需重启IDEA生效 | 今日金额可手动重置（重启后自动重置）")
         }
     }
+
 
     // 验证配置
     override fun isModified(): Boolean {
@@ -58,7 +70,9 @@ class MoneyTipConfigurable : Configurable {
                     LocalTime.parse(offWorkTimeField.text) != config.offWorkTime ||
                     LocalDate.parse(retireDateField.text) != config.retireDate ||
                     remindIntervalField.text.toInt() != config.remindInterval ||
-                    stockRemindThresholdField.text.toDouble() != config.stockRemindThreshold
+                    stockRemindThresholdField.text.toDouble() != config.stockRemindThreshold ||
+                    stockFundUrlField.text != config.stockFundUrl ||
+                    enableCustomReminderCheckBox.isSelected != config.enableCustomReminder
         } catch (e: Exception) {
             true
         }
@@ -74,6 +88,8 @@ class MoneyTipConfigurable : Configurable {
             config.retireDate = LocalDate.parse(retireDateField.text)
             config.remindInterval = remindIntervalField.text.toInt()
             config.stockRemindThreshold = stockRemindThresholdField.text.toDouble()
+            config.stockFundUrl = stockFundUrlField.text
+            config.enableCustomReminder = enableCustomReminderCheckBox.isSelected
 
             PluginConfig.save(config)
         } catch (e: DateTimeParseException) {
@@ -91,8 +107,9 @@ class MoneyTipConfigurable : Configurable {
         retireDateField.text = config.retireDate.toString()
         remindIntervalField.text = config.remindInterval.toString()
         stockRemindThresholdField.text = config.stockRemindThreshold.toString()
+        stockFundUrlField.text = config.stockFundUrl
+        enableCustomReminderCheckBox.isSelected = config.enableCustomReminder
     }
-
     override fun getDisplayName(): String = "MoneyTip 插件配置"
 
     override fun getHelpTopic(): String? = null

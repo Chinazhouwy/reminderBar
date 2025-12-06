@@ -23,7 +23,10 @@ data class PluginConfig(
     // 今日已赚金额
     var todayEarned: Double = 0.0,
     // 今日已扣金额
-    var todayDeducted: Double = 0.0
+    var todayDeducted: Double = 0.0,
+    // 在 PluginConfig 中新增如下字段
+     var stockFundUrl: String = "https://example.com/api/stock", // 默认值可自行设定
+     var enableCustomReminder: Boolean = false
 ) {
     companion object {
         private val properties = PropertiesComponent.getInstance()
