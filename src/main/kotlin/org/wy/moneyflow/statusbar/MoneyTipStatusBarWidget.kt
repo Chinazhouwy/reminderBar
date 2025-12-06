@@ -18,7 +18,7 @@ import javax.swing.JLabel
  */
 class MoneyTipStatusBarWidget(private val project: Project) : StatusBarWidget {
     private val label = JLabel()
-    private val config = PluginConfig.load()
+    private var config = PluginConfig.load()
     private val presentation = MyPresentation()
 
     init {
@@ -26,17 +26,18 @@ class MoneyTipStatusBarWidget(private val project: Project) : StatusBarWidget {
     }
 
     fun updateText() {
-        val offWorkCountdown = TimeUtil.getOffWorkCountdown(config.offWorkTime)
-        val retireDays = TimeUtil.getRetireCountdown(config.retireDate)
-        val todayProfit = config.todayEarned - config.todayDeducted
-        val stockInfo = StockUtil.getStockInfo(config.stockCode)
+        // 始终加载最新配置
+        val latestConfig = PluginConfig.load()
+        val offWorkCountdown = TimeUtil.getOffWorkCountdown(latestConfig.offWorkTime)
+        val retireDays = TimeUtil.getRetireCountdown(latestConfig.retireDate)
+        val todayProfit = latestConfig.todayEarned - latestConfig.todayDeducted
+        val stockInfo = StockUtil.getStockInfo(latestConfig.stockCode)
         var text = String.format(
-            " 🕒下班：%s | 🎯退休：%d天 | 💰今日：%.2f | 📈%s ",
+            " 🕒下班还有：%s小时 | 🎯退休：%d天 | 💰今日：%.2f | 📈%s ",
             offWorkCountdown, retireDays, todayProfit, stockInfo
         )
-        val config = PluginConfig.load()
-        if(config.enableCustomReminder){
-            config.reminders.forEach { reminder ->
+        if(latestConfig.enableCustomReminder){
+            latestConfig.reminders.forEach { reminder ->
                 val currentTime = LocalTime.now()
                 when (reminder.type) {
                     "TIME_POINT" -> {
@@ -48,8 +49,12 @@ class MoneyTipStatusBarWidget(private val project: Project) : StatusBarWidget {
                     }
                     "PERIODIC" -> {
                         val reminderInterval = reminder.value.toInt()
-                        // 提示消息
-                        text += " | ⏰${reminder.message}"
+                        // 计算当前时间（分钟数）是否是提醒间隔的倍数
+                        val currentMinuteOfDay = currentTime.hour * 60 + currentTime.minute
+                        if (currentMinuteOfDay % reminderInterval == 0) {
+                            // 提示消息
+                            text += " | ⏰${reminder.message}"
+                        }
                     }
                 }
             }

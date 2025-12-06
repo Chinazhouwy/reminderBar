@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit
  */
 class MoneyTipPlugin: ApplicationActivationListener {
     private val scheduler = Executors.newScheduledThreadPool(1)
-    private val config = PluginConfig.load()
 
     init {
         // 1. 每日重置今日金额
@@ -64,19 +63,20 @@ class MoneyTipPlugin: ApplicationActivationListener {
                 // 股票异常提醒
                 stockRemind()
             }
-        }, 0, 1, TimeUnit.MINUTES)
+        }, 0, 1, TimeUnit.SECONDS)
     }
 
     // 时间提醒
     private fun timeRemind() {
         val now = java.time.LocalTime.now()
-        if (now.minute % config.remindInterval == 0 && now.second < 10) {
-            val offWorkCountdown = TimeUtil.getOffWorkCountdown(config.offWorkTime)
+        val latestConfig = PluginConfig.load()
+        if (now.minute % latestConfig.remindInterval == 0 && now.second < 10) {
+            val offWorkCountdown = TimeUtil.getOffWorkCountdown(latestConfig.offWorkTime)
             val notification = NotificationGroupManager.getInstance()
                 .getNotificationGroup("MoneyTip Reminder")
                 .createNotification(
                     "⏰ 时间提醒",
-                    "距离下班还有 $offWorkCountdown | 今日已赚：${String.format("%.2f", config.todayEarned - config.todayDeducted)} 元",
+                    "距离下班还有 $offWorkCountdown | 今日已赚：${String.format("%.2f", latestConfig.todayEarned - latestConfig.todayDeducted)} 元",
                     NotificationType.INFORMATION
                 )
             notification.notify(null)
@@ -85,11 +85,12 @@ class MoneyTipPlugin: ApplicationActivationListener {
 
     // 自定义提醒
     private fun customRemind() {
-        if (!config.enableCustomReminder) return
+        val latestConfig = PluginConfig.load()
+        if (!latestConfig.enableCustomReminder) return
 
         val now = java.time.LocalTime.now()
 
-        config.reminders.forEach { reminder ->
+        latestConfig.reminders.forEach { reminder ->
             try {
                 when (reminder.type) {
                     "TIME_POINT" -> {
@@ -129,13 +130,14 @@ class MoneyTipPlugin: ApplicationActivationListener {
 
     // 股票异常提醒
     private fun stockRemind() {
-        val stockChange = StockUtil.getStockChange(config.stockCode)
-        if (Math.abs(stockChange) >= config.stockRemindThreshold) {
+        val latestConfig = PluginConfig.load()
+        val stockChange = StockUtil.getStockChange(latestConfig.stockCode)
+        if (Math.abs(stockChange) >= latestConfig.stockRemindThreshold) {
             val notification = NotificationGroupManager.getInstance()
                 .getNotificationGroup("MoneyTip Stock Reminder")
                 .createNotification(
                     "📈 股票提醒",
-                    "股票 ${config.stockCode} 涨跌幅达到 ${String.format("%.2f", stockChange)}%，超过阈值 ${config.stockRemindThreshold}%",
+                    "股票 ${latestConfig.stockCode} 涨跌幅达到 ${String.format("%.2f", stockChange)}%，超过阈值 ${latestConfig.stockRemindThreshold}%",
                     if (stockChange > 0) NotificationType.INFORMATION else NotificationType.WARNING
                 )
             notification.notify(null)

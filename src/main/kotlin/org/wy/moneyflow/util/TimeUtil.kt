@@ -19,10 +19,10 @@ object TimeUtil {
         val duration = Duration.between(now, target)
 
         val hours = duration.toHours()
-        val minutes = duration.toMinutes() % 60
-        val seconds = duration.seconds % 60
+//        val minutes = duration.toMinutes() % 60
+//        val seconds = duration.seconds % 60
 
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        return String.format("%02d", hours)
     }
 
     // 计算距离退休的天数

@@ -1,24 +1,17 @@
 package org.wy.moneyflow.config
 
-import com.intellij.ide.plugins.PluginManagerCore.getLogger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.components.*
 import com.intellij.ui.layout.*
 import org.wy.moneyflow.model.PluginConfig
 import org.wy.moneyflow.model.CustomReminder
-import java.awt.event.ActionEvent
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 import javax.swing.*
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
-import com.jetbrains.rd.util.LogLevel
-import com.jetbrains.rd.util.getLogger
-import com.jetbrains.rd.util.log
-import org.wy.moneyflow.statusbar.MoneyTipStatusBarWidget
 import java.awt.FlowLayout
 
 /**
