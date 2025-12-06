@@ -1,11 +1,11 @@
-package org.wy.moneyflow.config
+package org.wy.reminderBar.config
 
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
-import org.wy.moneyflow.model.PluginConfig
-import org.wy.moneyflow.model.CustomReminder
+import org.wy.reminderBar.model.PluginConfig
+import org.wy.reminderBar.model.CustomReminder
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeParseException

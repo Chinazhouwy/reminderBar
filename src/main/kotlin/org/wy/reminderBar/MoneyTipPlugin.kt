@@ -1,4 +1,4 @@
-package org.wy.moneyflow
+package org.wy.reminderBar
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -8,11 +8,11 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.wm.WindowManager
-import org.wy.moneyflow.listener.DocumentChangeListener
-import org.wy.moneyflow.model.PluginConfig
-import org.wy.moneyflow.statusbar.MoneyTipStatusBarWidget
-import org.wy.moneyflow.util.StockUtil
-import org.wy.moneyflow.util.TimeUtil
+import org.wy.reminderBar.listener.DocumentChangeListener
+import org.wy.reminderBar.model.PluginConfig
+import org.wy.reminderBar.statusbar.MoneyTipStatusBarWidget
+import org.wy.reminderBar.util.StockUtil
+import org.wy.reminderBar.util.TimeUtil
 import java.time.LocalDate
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

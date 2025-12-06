@@ -1,14 +1,12 @@
-package org.wy.moneyflow.listener
+package org.wy.reminderBar.listener
 
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import org.wy.moneyflow.model.PluginConfig
-import org.wy.moneyflow.ui.MoneyAnimationWindow
-import org.wy.moneyflow.util.TimeUtil
+import org.wy.reminderBar.model.PluginConfig
+import org.wy.reminderBar.ui.MoneyAnimationWindow
+import org.wy.reminderBar.util.TimeUtil
 import java.awt.Point
-import java.awt.Toolkit
 
 /**
  * 文档编辑监听器（监听打字/删行）

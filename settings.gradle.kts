@@ -1,1 +1,1 @@
-rootProject.name = "moneyflow"
+rootProject.name = "reminderBar"

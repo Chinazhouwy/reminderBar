@@ -1,4 +1,4 @@
-package org.wy.moneyflow.model
+package org.wy.reminderBar.model
 
 import com.intellij.ide.util.PropertiesComponent
 import java.time.LocalDate

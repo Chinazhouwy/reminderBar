@@ -1,4 +1,4 @@
-package org.wy.moneyflow.util
+package org.wy.reminderBar.util
 
 import java.time.Duration
 import java.time.LocalDate

@@ -1,6 +1,6 @@
 <idea-plugin>
-    <id>org.wy.moneyflow.money-tip-plugin</id>
-    <name>MoneyFlow</name>
+    <id>org.wy.reminderBar.money-tip-plugin</id>
+    <name>ReminderBar</name>
     <version>1.0.0</version>
     <vendor email="your@email.com" url="https://your.url">Your Name</vendor>
 
@@ -21,12 +21,12 @@
     <!-- 注册配置界面 -->
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable
-                instance="org.wy.moneyflow.config.MoneyTipConfigurable"
+                instance="org.wy.reminderBar.config.MoneyTipConfigurable"
                 id="money.tip.configurable"
                 displayName="MoneyTip"
                 groupId="tools"/>
 
-        <statusBarWidgetFactory implementation="org.wy.moneyflow.statusbar.MoneyTipStatusBarWidget$Factory" id="moneyTipStatusBarWidget"/>
+        <statusBarWidgetFactory implementation="org.wy.reminderBar.statusbar.MoneyTipStatusBarWidget$Factory" id="moneyTipStatusBarWidget"/>
 
         <notificationGroup id="MoneyTip Reminder"
                            displayType="BALLOON"
@@ -39,7 +39,7 @@
 
     <!-- 插件启动/关闭监听 -->
     <applicationListeners>
-        <listener class="org.wy.moneyflow.MoneyTipPlugin" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+        <listener class="org.wy.reminderBar.MoneyTipPlugin" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
 
     <depends>com.intellij.modules.platform</depends>

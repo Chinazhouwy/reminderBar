@@ -1,4 +1,4 @@
-package org.wy.moneyflow.util
+package org.wy.reminderBar.util
 
 import com.alibaba.fastjson.JSONObject
 import okhttp3.OkHttpClient

@@ -1,4 +1,4 @@
-package org.wy.moneyflow.ui
+package org.wy.reminderBar.ui
 
 import java.awt.*
 import java.awt.event.ActionEvent

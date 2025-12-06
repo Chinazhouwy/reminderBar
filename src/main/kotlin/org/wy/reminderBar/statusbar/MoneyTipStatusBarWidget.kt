@@ -1,13 +1,13 @@
-package org.wy.moneyflow.statusbar
+package org.wy.reminderBar.statusbar
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.intellij.util.Consumer
-import org.wy.moneyflow.model.PluginConfig
-import org.wy.moneyflow.util.StockUtil
-import org.wy.moneyflow.util.TimeUtil
+import org.wy.reminderBar.model.PluginConfig
+import org.wy.reminderBar.util.StockUtil
+import org.wy.reminderBar.util.TimeUtil
 import java.awt.Component
 import java.awt.event.MouseEvent
 import java.time.LocalTime
