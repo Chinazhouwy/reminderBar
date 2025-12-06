@@ -44,8 +44,8 @@
 
 如有问题或建议，欢迎通过以下方式联系：
 
-- 邮箱：your@email.com
-- GitHub：[your-github-profile](https://github.com/your-profile)
+- 邮箱：zhou_wy1991@foxmail.com
+- GitHub：[reminderBar](https://github.com/Chinazhouwy/reminderBar)
 
 ---
 
