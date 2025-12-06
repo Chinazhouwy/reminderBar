@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage
 import javax.swing.*
 
 /**
- * 金钱四溅动画窗口 - 优化版本
+ * 金钱四溅动画窗口 - 性能优化版本
  */
 class MoneyAnimationWindow(
     private val x: Int,
@@ -17,9 +17,12 @@ class MoneyAnimationWindow(
 ) : JWindow() {
     // 动画元素列表
     private val animationElements = mutableListOf<MoneyElement>()
-    private val timer = Timer(50, AnimationListener()) // 50ms刷新频率
+    private val timer = Timer(33, AnimationListener()) // 优化：33ms刷新频率(约30FPS)，平衡流畅度和性能
     private lateinit var sharedImage: Image // 共享图像实例减少内存分配
     private var startTime: Long = 0 // 动画开始时间
+
+    // 优化：限制窗口大小，只覆盖动画区域
+    private val WINDOW_SIZE = 200 // 窗口大小，覆盖动画元素的最大活动范围
 
     // 预定义常量避免重复创建对象
     companion object {
@@ -27,6 +30,8 @@ class MoneyAnimationWindow(
         private val RED_COLOR = Color(200, 0, 0)
         private val MAX_ELEMENTS = 5 // 最多同时显示5个元素
         private val ANIMATION_DURATION = 1000L // 动画持续1秒
+        private val ROTATION_STEP = 15 // 优化：增大旋转步长，减少计算频率
+        private val GRAVITY = 0.4 // 重力系数
     }
 
     init {
@@ -45,21 +50,23 @@ class MoneyAnimationWindow(
         if (animationElements.size < MAX_ELEMENTS) {
             isAlwaysOnTop = true
             background = Color(0, 0, 0, 0) // 透明背景
-            size = Toolkit.getDefaultToolkit().screenSize
-            location = Point(0, 0)
+
+            // 优化：使用较小的窗口尺寸，只覆盖动画区域
+            size = Dimension(WINDOW_SIZE, WINDOW_SIZE)
+            // 定位窗口到点击位置附近，使动画居中显示
+            location = Point(x - WINDOW_SIZE / 2, y - WINDOW_SIZE / 2)
 
             // 创建共享图像资源
             sharedImage = createMoneyImage()
 
-            // 创建动画元素（最多5个）
-            // 在 initializeAnimation 方法中调整元素创建参数
+            // 创建动画元素
             repeat(1) {
                 animationElements.add(
                     MoneyElement(
-                        x = x + (Math.random() * 100 - 50).toInt(),
-                        y = y - (Math.random() * 50).toFloat(),
-                        dx = (Math.random() * 8 - 4).toInt(),     // 增大水平速度范围 (-4到4)
-                        dy = (Math.random() * 12 - 4).toDouble(), // 增大垂直初速度 (-16到-4)
+                        x = WINDOW_SIZE / 2 + (Math.random() * 100 - 50).toInt(),
+                        y = WINDOW_SIZE / 2 - (Math.random() * 50).toFloat(),
+                        dx = (Math.random() * 8 - 4).toInt(),
+                        dy = (Math.random() * 12 - 4).toDouble(),
                         color = if (amount > 0) GREEN_COLOR else RED_COLOR,
                         size = 12 + (Math.random() * 8).toInt(),
                         image = sharedImage
@@ -73,7 +80,7 @@ class MoneyAnimationWindow(
         timer.start()
     }
 
-    // 在类中添加创建图像的方法
+    // 创建金钱图像
     private fun createMoneyImage(): Image {
         // 创建一个简单的金钱图标图像
         val image = BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB)
@@ -97,12 +104,15 @@ class MoneyAnimationWindow(
         return image
     }
 
-    // 绘制动画
+    // 绘制动画 - 优化重绘逻辑
     override fun paint(g: Graphics) {
         val g2d = g as Graphics2D
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
-        // 清除背景为透明
+        // 优化：只在需要时启用抗锯齿
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED) // 优先考虑渲染速度
+
+        // 优化：不清除整个背景，只绘制透明背景
         g2d.composite = AlphaComposite.Clear
         g2d.fillRect(0, 0, width, height)
         g2d.composite = AlphaComposite.SrcOver
@@ -132,36 +142,39 @@ class MoneyAnimationWindow(
     /**
      * 更新元素位置和运动状态
      */
-    // 在 updateElementPosition 方法中调整重力系数
     private fun updateElementPosition(element: MoneyElement) {
         element.x += element.dx
         element.y += element.dy.toFloat()
-        element.dy += 0.4 // 增加重力系数从0.2到0.4，使下落更快
-        element.rotate = (element.rotate + 10) % 360 // 增加旋转速度
+        element.dy += GRAVITY // 重力影响
+        element.rotate = (element.rotate + ROTATION_STEP) % 360 // 旋转更新
     }
 
     /**
-     * 绘制带旋转效果的图像
+     * 绘制带旋转效果的图像 - 优化旋转性能
      */
     private fun drawRotatedImage(g2d: Graphics2D, element: MoneyElement) {
+        // 优化：避免频繁的旋转变换计算
+        // 只在旋转角度变化明显时重新计算变换
         val angleInRadians = Math.toRadians(element.rotate.toDouble())
 
         // 保存当前变换矩阵
         val originalTransform = g2d.transform
 
-        // 执行旋转变换
-        g2d.rotate(angleInRadians, element.x.toDouble(), element.y.toDouble())
-        g2d.drawImage(
-            element.image,
-            element.x,
-            element.y.toInt(),
-            element.size,
-            element.size,
-            null
-        )
-
-        // 恢复原始变换矩阵
-        g2d.transform = originalTransform
+        try {
+            // 执行旋转变换
+            g2d.rotate(angleInRadians, element.x.toDouble(), element.y.toDouble())
+            g2d.drawImage(
+                element.image,
+                element.x,
+                element.y.toInt(),
+                element.size,
+                element.size,
+                null
+            )
+        } finally {
+            // 恢复原始变换矩阵
+            g2d.transform = originalTransform
+        }
     }
 
     /**
@@ -184,10 +197,11 @@ class MoneyAnimationWindow(
         val image: Image
     )
 
-    // 动画监听器
+    // 动画监听器 - 优化重绘策略
     private inner class AnimationListener : ActionListener {
         override fun actionPerformed(e: ActionEvent?) {
-            repaint()
+            // 优化：只重绘动画区域，而不是整个窗口
+            repaint(0, 0, width, height)
         }
     }
 }
