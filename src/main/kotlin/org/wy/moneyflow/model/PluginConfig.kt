@@ -61,7 +61,7 @@ data class PluginConfig(
                 todayDeducted = properties.getValue("moneyTip.todayDeducted", "0.0")?.toDoubleOrNull() ?: 0.0,
                 stockFundUrl = properties.getValue("moneyTip.stockFundUrl", "https://example.com/api/stock"),
                 enableCustomReminder = properties.getBoolean("moneyTip.enableCustomReminder", false),
-                enableMoneyAnimation = properties.getBoolean("moneyTip.enableMoneyAnimation", true),
+                enableMoneyAnimation = properties.getBoolean("moneyTip.enableMoneyAnimation", false),
                 reminders = listOf() // 目前先返回空列表，后续可以扩展为JSON序列化
             )
         }
@@ -86,6 +86,10 @@ data class PluginConfig(
         fun resetTodayAmount() {
             properties.setValue("moneyTip.todayEarned", 0.0.toString())
             properties.setValue("moneyTip.todayDeducted", 0.0.toString())
+        }
+
+        fun printData(): String {
+            return "properties：${properties}"
         }
     }
 }

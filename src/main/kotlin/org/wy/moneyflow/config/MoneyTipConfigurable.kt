@@ -1,7 +1,9 @@
 package org.wy.moneyflow.config
 
+import com.intellij.ide.plugins.PluginManagerCore.getLogger
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.*
 import com.intellij.ui.layout.*
 import org.wy.moneyflow.model.PluginConfig
@@ -13,6 +15,10 @@ import java.time.format.DateTimeParseException
 import javax.swing.*
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
+import com.jetbrains.rd.util.LogLevel
+import com.jetbrains.rd.util.getLogger
+import com.jetbrains.rd.util.log
+import org.wy.moneyflow.statusbar.MoneyTipStatusBarWidget
 import java.awt.FlowLayout
 
 /**
@@ -39,7 +45,7 @@ class MoneyTipConfigurable : Configurable {
 
     // 自定义提醒控件容器类
     private class ReminderControl {
-        val typeComboBox = JComboBox(arrayOf("时间点提醒", "周期性提醒"))
+        val typeComboBox = ComboBox(arrayOf("时间点提醒", "周期性提醒"))
         val valueField = JBTextField(8)
         val messageField = JBTextField(20)
         val removeButton = JButton("删除")
@@ -125,6 +131,7 @@ class MoneyTipConfigurable : Configurable {
     // 更新提醒面板
     private fun updateReminderPanel() {
         reminderPanel.removeAll()
+        reminderPanel.layout = BoxLayout(reminderPanel, BoxLayout.Y_AXIS)
         reminderControls.forEach { control ->
             val rowPanel = JPanel().apply {
                 layout = FlowLayout(FlowLayout.LEFT)
@@ -201,6 +208,8 @@ class MoneyTipConfigurable : Configurable {
             config.reminders = reminderControls.map { it.toReminder() }
 
             PluginConfig.save(config)
+//            getLogger().info(  PluginConfig.printData() )
+            println(PluginConfig.printData())
         } catch (e: DateTimeParseException) {
             throw ConfigurationException("时间格式错误！正确格式：HH:mm（下班时间/提醒时间）、yyyy-MM-dd（退休日期）")
         } catch (e: NumberFormatException) {

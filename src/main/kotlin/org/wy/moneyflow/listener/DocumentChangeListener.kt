@@ -15,7 +15,7 @@ import java.awt.Toolkit
  */
 class DocumentChangeListener(private val editor: Editor) : DocumentListener {
     private var lastLineCount = editor.document.lineCount
-    private val config = PluginConfig.load()
+    private var config = PluginConfig.load()
 
     // 文档内容变更监听
     override fun documentChanged(event: DocumentEvent) {
@@ -25,6 +25,7 @@ class DocumentChangeListener(private val editor: Editor) : DocumentListener {
         val oldText = event.oldFragment.toString()
 
         // 1. 打字赚钱（新增字符）
+        config = PluginConfig.load()
         if (newText.isNotEmpty() && oldText.isEmpty()) {
             val charEarn = TimeUtil.getCharEarn(config.hourlyWage)
             val earnAmount = newText.length * charEarn

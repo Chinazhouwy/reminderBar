@@ -10,6 +10,7 @@ import org.wy.moneyflow.util.StockUtil
 import org.wy.moneyflow.util.TimeUtil
 import java.awt.Component
 import java.awt.event.MouseEvent
+import java.time.LocalTime
 import javax.swing.JLabel
 
 /**
@@ -29,11 +30,31 @@ class MoneyTipStatusBarWidget(private val project: Project) : StatusBarWidget {
         val retireDays = TimeUtil.getRetireCountdown(config.retireDate)
         val todayProfit = config.todayEarned - config.todayDeducted
         val stockInfo = StockUtil.getStockInfo(config.stockCode)
-
-        val text = String.format(
+        var text = String.format(
             " 🕒下班：%s | 🎯退休：%d天 | 💰今日：%.2f | 📈%s ",
             offWorkCountdown, retireDays, todayProfit, stockInfo
         )
+        val config = PluginConfig.load()
+        if(config.enableCustomReminder){
+            config.reminders.forEach { reminder ->
+                val currentTime = LocalTime.now()
+                when (reminder.type) {
+                    "TIME_POINT" -> {
+                        val reminderTime = LocalTime.parse(reminder.value)
+                        if (currentTime.isAfter(reminderTime)) {
+                            // 提示消息
+                            text += " | ⏰${reminder.message}"
+                        }
+                    }
+                    "PERIODIC" -> {
+                        val reminderInterval = reminder.value.toInt()
+                        // 提示消息
+                        text += " | ⏰${reminder.message}"
+                    }
+                }
+            }
+        }
+
         label.text = text
     }
 
