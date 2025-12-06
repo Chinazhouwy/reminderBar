@@ -5,6 +5,18 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 /**
+ * 自定义提醒数据模型
+ */
+data class CustomReminder(
+    // 提醒类型：TIME_POINT（时间点提醒）、PERIODIC（周期性提醒）
+    var type: String = "TIME_POINT",
+    // 时间点（如12:00）或周期（分钟数）
+    var value: String = "12:00",
+    // 提醒消息
+    var message: String = "提醒"
+)
+
+/**
  * 插件配置数据模型
  */
 data class PluginConfig(
@@ -24,9 +36,14 @@ data class PluginConfig(
     var todayEarned: Double = 0.0,
     // 今日已扣金额
     var todayDeducted: Double = 0.0,
-    // 在 PluginConfig 中新增如下字段
-     var stockFundUrl: String = "https://example.com/api/stock", // 默认值可自行设定
-     var enableCustomReminder: Boolean = false
+    // 股票基金数据URL
+    var stockFundUrl: String = "https://example.com/api/stock",
+    // 是否启用自定义提醒
+    var enableCustomReminder: Boolean = false,
+    // 是否开启金钱四溅效果
+    var enableMoneyAnimation: Boolean = true,
+    // 自定义提醒列表
+    var reminders: List<CustomReminder> = emptyList()
 ) {
     companion object {
         private val properties = PropertiesComponent.getInstance()
@@ -42,6 +59,10 @@ data class PluginConfig(
                 stockRemindThreshold = properties.getValue("moneyTip.stockRemindThreshold", "1.0")?.toDoubleOrNull() ?: 1.0,
                 todayEarned = properties.getValue("moneyTip.todayEarned", "0.0")?.toDoubleOrNull() ?: 0.0,
                 todayDeducted = properties.getValue("moneyTip.todayDeducted", "0.0")?.toDoubleOrNull() ?: 0.0,
+                stockFundUrl = properties.getValue("moneyTip.stockFundUrl", "https://example.com/api/stock"),
+                enableCustomReminder = properties.getBoolean("moneyTip.enableCustomReminder", false),
+                enableMoneyAnimation = properties.getBoolean("moneyTip.enableMoneyAnimation", true),
+                reminders = listOf() // 目前先返回空列表，后续可以扩展为JSON序列化
             )
         }
 
@@ -55,6 +76,10 @@ data class PluginConfig(
             properties.setValue("moneyTip.stockRemindThreshold", config.stockRemindThreshold.toString())
             properties.setValue("moneyTip.todayEarned", config.todayEarned.toString())
             properties.setValue("moneyTip.todayDeducted", config.todayDeducted.toString())
+            properties.setValue("moneyTip.stockFundUrl", config.stockFundUrl)
+            properties.setValue("moneyTip.enableCustomReminder", config.enableCustomReminder)
+            properties.setValue("moneyTip.enableMoneyAnimation", config.enableMoneyAnimation)
+            // 自定义提醒列表的保存可以后续扩展为JSON序列化
         }
 
         // 重置今日金额

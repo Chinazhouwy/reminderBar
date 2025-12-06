@@ -58,6 +58,9 @@ class MoneyTipPlugin: ApplicationActivationListener {
                 // 时间提醒
                 timeRemind()
 
+                // 自定义提醒
+                customRemind()
+
                 // 股票异常提醒
                 stockRemind()
             }
@@ -77,6 +80,50 @@ class MoneyTipPlugin: ApplicationActivationListener {
                     NotificationType.INFORMATION
                 )
             notification.notify(null)
+        }
+    }
+
+    // 自定义提醒
+    private fun customRemind() {
+        if (!config.enableCustomReminder) return
+
+        val now = java.time.LocalTime.now()
+
+        config.reminders.forEach { reminder ->
+            try {
+                when (reminder.type) {
+                    "TIME_POINT" -> {
+                        // 时间点提醒
+                        val remindTime = java.time.LocalTime.parse(reminder.value)
+                        if (now.hour == remindTime.hour && now.minute == remindTime.minute && now.second < 10) {
+                            val notification = NotificationGroupManager.getInstance()
+                                .getNotificationGroup("MoneyTip Reminder")
+                                .createNotification(
+                                    "⏰ 自定义提醒",
+                                    reminder.message,
+                                    NotificationType.INFORMATION
+                                )
+                            notification.notify(null)
+                        }
+                    }
+                    "PERIODIC" -> {
+                        // 周期性提醒（分钟）
+                        val interval = reminder.value.toInt()
+                        if (now.minute % interval == 0 && now.second < 10) {
+                            val notification = NotificationGroupManager.getInstance()
+                                .getNotificationGroup("MoneyTip Reminder")
+                                .createNotification(
+                                    "⏰ 自定义提醒",
+                                    reminder.message,
+                                    NotificationType.INFORMATION
+                                )
+                            notification.notify(null)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                // 忽略解析错误
+            }
         }
     }
 

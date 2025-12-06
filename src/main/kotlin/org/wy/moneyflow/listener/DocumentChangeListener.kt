@@ -52,16 +52,19 @@ class DocumentChangeListener(private val editor: Editor) : DocumentListener {
 
     // 显示动画
     private fun showAnimation(amount: Double, offset: Int) {
-        // 获取光标位置的屏幕坐标
-        val visualPosition = editor.offsetToVisualPosition(offset)
-        val point = editor.visualPositionToXY(visualPosition)
-        val screenPoint = Point(
-            editor.component.locationOnScreen.x + point.x,
-            editor.component.locationOnScreen.y + point.y
-        )
+        // 检查是否启用金钱四溅效果
+        if (config.enableMoneyAnimation) {
+            // 获取光标位置的屏幕坐标
+            val visualPosition = editor.offsetToVisualPosition(offset)
+            val point = editor.visualPositionToXY(visualPosition)
+            val screenPoint = Point(
+                editor.component.locationOnScreen.x + point.x,
+                editor.component.locationOnScreen.y + point.y
+            )
 
-        // 启动动画
-        MoneyAnimationWindow(screenPoint.x, screenPoint.y, amount).isVisible = true
+            // 启动动画
+            MoneyAnimationWindow(screenPoint.x, screenPoint.y, amount).isVisible = true
+        }
     }
 
     companion object {
