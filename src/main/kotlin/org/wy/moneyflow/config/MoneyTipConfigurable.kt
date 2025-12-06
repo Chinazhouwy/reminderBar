@@ -118,7 +118,7 @@ class MoneyTipConfigurable : Configurable {
                 }
             }
 
-            noteRow("提示：配置修改后需重启IDEA生效 | 今日金额可手动重置（重启后自动重置）")
+            noteRow("提示：金钱四溅效果可动态开关 | 今日金额可手动重置（重启后自动重置）")
         }
     }
 

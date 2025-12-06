@@ -52,8 +52,10 @@ class DocumentChangeListener(private val editor: Editor) : DocumentListener {
 
     // 显示动画
     private fun showAnimation(amount: Double, offset: Int) {
+        // 每次都加载最新的配置，实现动态开关效果
+        val latestConfig = PluginConfig.load()
         // 检查是否启用金钱四溅效果
-        if (config.enableMoneyAnimation) {
+        if (latestConfig.enableMoneyAnimation) {
             // 获取光标位置的屏幕坐标
             val visualPosition = editor.offsetToVisualPosition(offset)
             val point = editor.visualPositionToXY(visualPosition)
